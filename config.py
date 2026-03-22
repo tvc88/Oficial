@@ -6,6 +6,20 @@ from typing import List, Tuple, Optional
 logger = logging.getLogger(__name__)
 
 
+def read_json_file(file_path: Path) -> dict:
+    """Lê JSON tentando UTF-8 primeiro e fallback para codificações legadas."""
+    last_exc = None
+    for encoding in ("utf-8", "cp1252", "latin-1"):
+        try:
+            return json.loads(file_path.read_text(encoding=encoding))
+        except UnicodeDecodeError as exc:
+            last_exc = exc
+            continue
+    if last_exc:
+        raise last_exc
+    return json.loads(file_path.read_text(encoding="utf-8"))
+
+
 def load_config(file_path: Path) -> Tuple[Path, Path, List[dict], Optional[str], Optional[str]]:
     out_manual = Path.home() / "GRAVACOES MANUAIS"
     out_monitor = Path.home() / "MONITORAMENTO"
@@ -14,7 +28,7 @@ def load_config(file_path: Path) -> Tuple[Path, Path, List[dict], Optional[str],
     telegram_chat_id = None
     if file_path.exists():
         try:
-            data = json.loads(file_path.read_text())
+            data = read_json_file(file_path)
             out_manual = Path(data.get("output_dir_manual", str(out_manual)))
             out_monitor = Path(data.get("output_dir_monitor", str(out_monitor)))
             monitored = data.get("monitored", [])
@@ -44,7 +58,7 @@ def save_config(
     prev = {}
     if file_path.exists():
         try:
-            prev = json.loads(file_path.read_text())
+            prev = read_json_file(file_path)
         except Exception:
             prev = {}
         if telegram_token is None:
@@ -59,7 +73,7 @@ def save_config(
             if backup.exists():
                 backup.unlink()
             file_path.replace(backup)
-        file_path.write_text(json.dumps(data, indent=2, ensure_ascii=False))
+        file_path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
     except Exception as e:
         logger.error("Falha ao salvar configuração: %s", e)
         backup = file_path.with_suffix('.json.bak')
