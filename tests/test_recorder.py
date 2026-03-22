@@ -118,7 +118,10 @@ def test_start_auto_does_not_precreate_ts(monkeypatch, tmp_path):
     monkeypatch.setattr(
         Recorder,
         "_start_stderr_reader",
-        lambda self, key, proc, tails, threads: (tails.setdefault(key, deque(maxlen=200)), threads.setdefault(key, DummyThread())),
+        lambda self, key, proc, tails, threads: (
+            tails.setdefault(key, deque(maxlen=200)),
+            threads.setdefault(key, DummyThread()),
+        ),
     )
 
     rec = Recorder()
@@ -142,6 +145,38 @@ def test_get_manual_exit_info_reads_drained_stderr():
     assert rec.stderr_thread[1].join_calls == 1
 
 
+def test_get_auto_exit_info_reads_drained_stderr():
+    rec = Recorder()
+    rec.aproc[2] = FakeProc(returncode=2)
+    rec.astderr_tail[2] = deque(["auto 1", "auto erro"], maxlen=200)
+    rec.astderr_thread[2] = DummyThread(alive=True)
+
+    info = rec.get_auto_exit_info(2)
+
+    assert info == (2, "auto 1\nauto erro")
+    assert rec.aexit_info[2] == info
+    assert rec.astderr_thread[2].join_calls == 1
+
+
+def test_finish_manual_cleans_stderr_state():
+    rec = Recorder()
+    rec.proc[1] = FakeProc(returncode=1)
+    rec.start[1] = 123.0
+    rec.ts[1] = Path("video.ts")
+    rec.exit_info[1] = (1, "erro")
+    rec.stderr_tail[1] = deque(["erro"], maxlen=200)
+    rec.stderr_thread[1] = DummyThread()
+
+    rec.finish_manual(1)
+
+    assert 1 not in rec.proc
+    assert 1 not in rec.start
+    assert 1 not in rec.ts
+    assert 1 not in rec.exit_info
+    assert 1 not in rec.stderr_tail
+    assert 1 not in rec.stderr_thread
+
+
 def test_stop_manual_converts_finished_process(monkeypatch, tmp_path):
     rec = Recorder()
     proc = FakeProc(returncode=1, stderr_text="falhou")
@@ -154,7 +189,11 @@ def test_stop_manual_converts_finished_process(monkeypatch, tmp_path):
     immediate_stop = ImmediateExecutor()
     monkeypatch.setattr(recorder, "EXEC_CONV", immediate_conv)
     monkeypatch.setattr(recorder, "EXEC_STOP", immediate_stop)
-    monkeypatch.setattr(recorder, "convert_ts", lambda path: (True, Path(str(path).replace('.ts', '.mp4'))))
+    monkeypatch.setattr(
+        recorder,
+        "convert_ts",
+        lambda path: (True, Path(str(path).replace('.ts', '.mp4'))),
+    )
 
     received = {}
 

@@ -70,6 +70,35 @@ class Recorder:
         threads[key] = thread
         thread.start()
 
+    def _register_process(
+        self,
+        key: int,
+        proc: subprocess.Popen,
+        ts: Path,
+        proc_map: dict[int, subprocess.Popen],
+        start_map: dict[int, float],
+        ts_map: dict[int, Path],
+        exit_map: dict[int, tuple[int | None, str]],
+        tails: dict[int, deque[str]],
+        threads: dict[int, threading.Thread],
+    ) -> None:
+        """Registra subprocesso e inicia drenagem do stderr.
+
+        Este helper centraliza a lógica compartilhada entre manual/automático
+        para evitar divergência em futuros merges.
+        """
+        proc_map[key] = proc
+        start_map[key] = time.time()
+        ts_map[key] = ts
+        exit_map.pop(key, None)
+        self._start_stderr_reader(key, proc, tails, threads)
+
+    @staticmethod
+    def _finish_process_state(key: int, *stores: dict) -> None:
+        """Remove o estado associado a um subprocesso gravado."""
+        for store in stores:
+            store.pop(key, None)
+
     @staticmethod
     def _spawn_streamlink(url: str, qual: str, ts: Path) -> subprocess.Popen:
         """Inicia o processo do Streamlink."""
@@ -104,11 +133,17 @@ class Recorder:
         subdir.mkdir(parents=True, exist_ok=True)
         ts = subdir / f"{datetime.now():%d%m%y_%H%M}.ts"
         p = self._spawn_streamlink(url, qual, ts)
-        self.proc[key] = p
-        self.start[key] = time.time()
-        self.ts[key] = ts
-        self.exit_info.pop(key, None)
-        self._start_stderr_reader(key, p, self.stderr_tail, self.stderr_thread)
+        self._register_process(
+            key,
+            p,
+            ts,
+            self.proc,
+            self.start,
+            self.ts,
+            self.exit_info,
+            self.stderr_tail,
+            self.stderr_thread,
+        )
         return ts
 
     def stop_manual(self, key: int, callback: Callable):
@@ -133,15 +168,15 @@ class Recorder:
 
     def finish_manual(self, key: int):
         """Remove registros da gravação manual finalizada."""
-        for d in (
+        self._finish_process_state(
+            key,
             self.proc,
             self.start,
             self.ts,
             self.exit_info,
             self.stderr_tail,
             self.stderr_thread,
-        ):
-            d.pop(key, None)
+        )
 
     def get_manual_exit_info(self, key: int) -> tuple[int | None, str]:
         """Retorna detalhes do encerramento do processo manual."""
@@ -165,11 +200,17 @@ class Recorder:
         subdir.mkdir(parents=True, exist_ok=True)
         ts = subdir / f"{datetime.now():%d%m%y_%H%M}.ts"
         p = self._spawn_streamlink(url, qual, ts)
-        self.aproc[key] = p
-        self.astart[key] = time.time()
-        self.ats[key] = ts
-        self.aexit_info.pop(key, None)
-        self._start_stderr_reader(key, p, self.astderr_tail, self.astderr_thread)
+        self._register_process(
+            key,
+            p,
+            ts,
+            self.aproc,
+            self.astart,
+            self.ats,
+            self.aexit_info,
+            self.astderr_tail,
+            self.astderr_thread,
+        )
         return ts
 
     def stop_auto(self, key: int, callback: Callable):
@@ -194,15 +235,15 @@ class Recorder:
 
     def finish_auto(self, key: int):
         """Remove registros da gravação automática finalizada."""
-        for d in (
+        self._finish_process_state(
+            key,
             self.aproc,
             self.astart,
             self.ats,
             self.aexit_info,
             self.astderr_tail,
             self.astderr_thread,
-        ):
-            d.pop(key, None)
+        )
 
     def get_auto_exit_info(self, key: int) -> tuple[int | None, str]:
         """Retorna detalhes do encerramento do processo automático."""
