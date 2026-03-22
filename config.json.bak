@@ -1,0 +1,312 @@
+{
+  "output_dir_manual": "E:\\GRAVACOES MANUAIS",
+  "output_dir_monitor": "E:\\MONITORAMENTO",
+  "monitored": [
+    {
+      "num": "1",
+      "nome": "DJ Raul",
+      "url": "https://www.youtube.com/@marioschaf3r",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 15:47:12 do dia 03/06/2025"
+    },
+    {
+      "num": "2",
+      "nome": "Bluezao",
+      "url": "http://www.youtube.com/channel/UCBatASZqr6P6x2MaiOukh0Q",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 19:17:48 do dia 03/06/2025"
+    },
+    {
+      "num": "3",
+      "nome": "Homem Deita",
+      "url": "http://www.youtube.com/channel/UCj8QX6GbBUJq26RkhcV7ZOw",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 04:08:44 do dia 04/06/2025"
+    },
+    {
+      "num": "4",
+      "nome": "Festa Secreta",
+      "url": "http://www.youtube.com/channel/UCWphxL39Z7g34s96bAHLOUQ",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 04:08:44 do dia 04/06/2025"
+    },
+    {
+      "num": "5",
+      "nome": "Rafão Otaku",
+      "url": "http://www.youtube.com/channel/UCkhPtlK-GDQd-Wb2bDo3BpA",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 04:08:44 do dia 04/06/2025"
+    },
+    {
+      "num": "6",
+      "nome": "Babi Novaes",
+      "url": "http://www.youtube.com/channel/UCAAKnr5LicTxQoDBI_43uTw",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 04:08:43 do dia 04/06/2025"
+    },
+    {
+      "num": "7",
+      "nome": "Frederic Roger",
+      "url": "http://www.youtube.com/channel/UCbAXz6ciw4vzO1d_M4oZpWA",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 04:08:43 do dia 04/06/2025"
+    },
+    {
+      "num": "8",
+      "nome": "Hospital",
+      "url": "https://www.youtube.com/@DaleDriver1",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 03:12:43 do dia 04/06/2025"
+    },
+    {
+      "num": "9",
+      "nome": "Variado Portugal",
+      "url": "https://www.youtube.com/@Variadooo",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 02:35:43 do dia 04/06/2025"
+    },
+    {
+      "num": "10",
+      "nome": "Barão dos States",
+      "url": "http://www.youtube.com/channel/UC2Hs1twuMs3Sn5KZmlqWMkg",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 02:17:52 do dia 04/06/2025"
+    },
+    {
+      "num": "11",
+      "nome": "Uber Carrasco",
+      "url": "https://www.youtube.com/@CarrascodeMesquita-bx2nw",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 02:36:43 do dia 04/06/2025"
+    },
+    {
+      "num": "12",
+      "nome": "Magic",
+      "url": "https://kick.com/tylersherwinmagic",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 03:20:34 do dia 04/06/2025"
+    },
+    {
+      "num": "13",
+      "nome": "Lukix",
+      "url": "https://www.youtube.com/@Lukixfer",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 00:33:37 do dia 04/06/2025"
+    },
+    {
+      "num": "14",
+      "nome": "Jean General",
+      "url": "http://www.youtube.com/channel/UCk1HDUTACONo8vTB1gE9nZQ",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 23:30:16 do dia 03/06/2025"
+    },
+    {
+      "num": "15",
+      "nome": "Vivi Litrão",
+      "url": "https://www.youtube.com/@ViviDePaula85",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 23:23:18 do dia 03/06/2025"
+    },
+    {
+      "num": "16",
+      "nome": "Alanzoka",
+      "url": "https://www.twitch.tv/alanzoka?lang=pt-br",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 22:11:37 do dia 03/06/2025"
+    },
+    {
+      "num": "17",
+      "nome": "Vini 7",
+      "url": "https://www.youtube.com/@vinisettepolitica",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 00:05:30 do dia 04/06/2025"
+    },
+    {
+      "num": "18",
+      "nome": "Adilson",
+      "url": "http://www.youtube.com/channel/UCqfBwy2iqjju4hYcWPer-Rg",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 17:48:12 do dia 03/06/2025"
+    },
+    {
+      "num": "19",
+      "nome": "Renata Almeida",
+      "url": "https://www.youtube.com/@renataalmeida7583",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 18:16:13 do dia 03/06/2025"
+    },
+    {
+      "num": "20",
+      "nome": "Vava",
+      "url": "https://www.youtube.com/@Vav%C3%A1-x4n",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 17:17:17 do dia 03/06/2025"
+    },
+    {
+      "num": "21",
+      "nome": "Vivi Improvisada",
+      "url": "http://www.youtube.com/channel/UC8suL7MKBobW6GBGoVeB3AA",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 15:20:12 do dia 03/06/2025"
+    },
+    {
+      "num": "22",
+      "nome": "Katinha Aguiar",
+      "url": "http://www.youtube.com/channel/UCrUOxruLV17Tdq5VKGHsutg",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 14:56:14 do dia 03/06/2025"
+    },
+    {
+      "num": "23",
+      "nome": "Humilde Campones",
+      "url": "https://www.youtube.com/@humildezzz",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 07:45:20 do dia 03/06/2025"
+    },
+    {
+      "num": "24",
+      "nome": "Imigrante Cancelado",
+      "url": "http://www.youtube.com/channel/UCAryuSewhQ-sCLCTy3opsHg",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 22:15:20 do dia 02/06/2025"
+    },
+    {
+      "num": "25",
+      "nome": "Maluny",
+      "url": "https://www.youtube.com/@mmaluny",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 02:32:54 do dia 03/06/2025"
+    },
+    {
+      "num": "26",
+      "nome": "Alicia Bonetti",
+      "url": "http://www.youtube.com/channel/UCYd8Lwv4MoucGZfrN3K7tdA",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 21:49:21 do dia 02/06/2025"
+    },
+    {
+      "num": "27",
+      "nome": "Eder Katinha",
+      "url": "https://www.youtube.com/@botandopapoemdia1",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 18:07:25 do dia 02/06/2025"
+    },
+    {
+      "num": "28",
+      "nome": "Dicas da Josy",
+      "url": "http://www.youtube.com/channel/UCsjj9TnP4-rlnpSYQM0UR_A",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 15:39:22 do dia 02/06/2025"
+    },
+    {
+      "num": "29",
+      "nome": "St Clair",
+      "url": "https://www.youtube.com/@St_Clair85",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 02:22:07 do dia 02/06/2025"
+    },
+    {
+      "num": "30",
+      "nome": "Droneiro",
+      "url": "http://www.youtube.com/channel/UC0WhtI3JnJdSxgmKwJNt6rA",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 05:17:23 do dia 02/06/2025"
+    },
+    {
+      "num": "31",
+      "nome": "Lagoa Fantasma",
+      "url": "https://www.youtube.com/@SoldadoFantasma-b8w",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 20:12:58 do dia 01/06/2025"
+    },
+    {
+      "num": "32",
+      "nome": "Patricinha",
+      "url": "https://www.youtube.com/@PATRICINHAAVOZSHOW",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 16:27:59 do dia 01/06/2025"
+    },
+    {
+      "num": "33",
+      "nome": "Bruto",
+      "url": "http://www.youtube.com/channel/UC1Sdv3z2PkzOZ1eYn5kHpJw",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 21:21:55 do dia 31/05/2025"
+    },
+    {
+      "num": "34",
+      "nome": "Mister Luiz",
+      "url": "http://www.youtube.com/channel/UC0vtPWrIGpQTYj8zGyWM5-A",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 22:57:24 do dia 30/05/2025"
+    },
+    {
+      "num": "35",
+      "nome": "Haguri Racer",
+      "url": "http://www.youtube.com/channel/UCcvNPOPf8YT3Rv8HZE2XwVw",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 15:12:40 do dia 30/05/2025"
+    },
+    {
+      "num": "36",
+      "nome": "Lombrigato",
+      "url": "https://www.youtube.com/@LombrigatoRua9",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 21:27:42 do dia 29/05/2025"
+    },
+    {
+      "num": "37",
+      "nome": "Tribunal dos Corticeiros",
+      "url": "http://www.youtube.com/channel/UCX-OxgabQcrptTm4Q_tTqaw",
+      "active": true,
+      "qual": "best",
+      "hist": "Última live às 23:26:03 do dia 26/05/2025"
+    },
+    {
+      "num": "38",
+      "nome": "Fabee",
+      "url": "https://www.youtube.com/@FabeeBurckmann66666",
+      "active": true,
+      "qual": "best",
+      "hist": "-"
+    }
+  ],
+  "telegram_token": null,
+  "telegram_chat_id": null
+}
