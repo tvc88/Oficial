@@ -57,6 +57,7 @@ POLL_LIVE = 60  # segundos p/ checar status LIVE
 POLL_QUEUE = 1  # segundos p/ processar fila
 MAX_CHANNELS = 200
 WATCHDOG_MAX = 3  # ciclos de inatividade do .ts antes de forçar stop
+MAX_ERROR_TEXT = 160
 
 BUTTON_STYLE = """
 QPushButton{
@@ -104,6 +105,7 @@ class MainWindow(QMainWindow):
         self.recorder = Recorder()
         self.manual_last_size, self.manual_inact = {}, {}
         self.auto_last_size, self.auto_inact = {}, {}
+        self.manual_finishing, self.auto_finishing = set(), set()
         self.live_queue: queue.Queue[tuple[int, bool, str]] = queue.Queue()
 
         self.telegram_token = None
@@ -512,6 +514,71 @@ class MainWindow(QMainWindow):
         self.manual_log.appendPlainText(f"[{datetime.now():%H:%M:%S}] {msg}")
         self.manual_log.verticalScrollBar().setValue(self.manual_log.verticalScrollBar().maximum())
 
+    @staticmethod
+    def _summarize_stderr(stderr: str | None, fallback: str = "Falha desconhecida") -> str:
+        if not stderr:
+            return fallback
+        lines = [line.strip() for line in stderr.splitlines() if line.strip()]
+        if not lines:
+            return fallback
+        text = lines[-1]
+        if len(text) > MAX_ERROR_TEXT:
+            return f"{text[: MAX_ERROR_TEXT - 1]}…"
+        return text
+
+    @staticmethod
+    def _safe_size(path: Path | None) -> int:
+        if not path or not path.exists():
+            return 0
+        try:
+            return path.stat().st_size
+        except OSError:
+            return 0
+
+    def _finalize_manual_failure(self, item, iid, returncode, stderr):
+        details = self._summarize_stderr(stderr, "Streamlink encerrou sem capturar dados")
+        item.setText(3, "Erro")
+        item.setText(4, details)
+        self._manual_log(
+            f"❌ Falha na gravação de {item.text(0)} (código {returncode}): {details}"
+        )
+        logger.error(
+            "Falha na gravação manual de %s (%s). Código=%s. stderr=%s",
+            item.text(0),
+            item.text(1),
+            returncode,
+            stderr,
+        )
+        ts_path = self.recorder.ts.get(iid)
+        if ts_path:
+            ts_path.unlink(missing_ok=True)
+        self.recorder.finish_manual(iid)
+        self.manual_finishing.discard(iid)
+        for d in (self.manual_last_size, self.manual_inact):
+            d.pop(iid, None)
+
+    def _finalize_auto_failure(self, ch, cid, returncode, stderr):
+        details = self._summarize_stderr(stderr, "Streamlink encerrou sem capturar dados")
+        ch.setText(4, "Erro")
+        ch.setText(5, details)
+        self._mon_log(
+            f"❌ Falha na gravação automática de {ch.text(2)} (código {returncode}): {details}"
+        )
+        logger.error(
+            "Falha na gravação automática de %s (%s). Código=%s. stderr=%s",
+            ch.text(2),
+            ch.text(3),
+            returncode,
+            stderr,
+        )
+        ts_path = self.recorder.ats.get(cid)
+        if ts_path:
+            ts_path.unlink(missing_ok=True)
+        self.recorder.finish_auto(cid)
+        self.auto_finishing.discard(cid)
+        for d in (self.auto_last_size, self.auto_inact):
+            d.pop(cid, None)
+
     # ---------------- Config load/save ---------------------------------
     def _load_cfg(self):
         (
@@ -621,6 +688,7 @@ class MainWindow(QMainWindow):
         iid = id(item)
         if iid not in self.recorder.proc:
             return
+        self.manual_finishing.add(iid)
         item.setText(3, "Convertendo…")
         self.conv_progress.setRange(0, 0)
         self.recorder.stop_manual(iid, lambda fut, k=iid, it=item: self._finish_manual(fut, it, k))
@@ -654,6 +722,7 @@ class MainWindow(QMainWindow):
             self.order_tree.takeTopLevelItem(self.order_tree.indexOfTopLevelItem(item))
 
         self.recorder.finish_manual(iid)
+        self.manual_finishing.discard(iid)
         for d in (self.manual_last_size, self.manual_inact):
             d.pop(iid, None)
         self.conv_progress.setRange(0, 1)
@@ -759,6 +828,7 @@ class MainWindow(QMainWindow):
             cid = id(ch)
             if cid not in self.recorder.aproc:
                 continue
+            self.auto_finishing.add(cid)
             ch.setText(4, "Convertendo…")
             self.conv_progress.setRange(0, 0)
             self.recorder.stop_auto(cid, lambda fut, c=cid, it=ch: self._finish_auto(fut, it, c))
@@ -790,6 +860,7 @@ class MainWindow(QMainWindow):
 
         for d in (self.recorder.aproc, self.recorder.astart, self.recorder.ats):
             d.pop(cid, None)
+        self.auto_finishing.discard(cid)
         for d in (self.auto_last_size, self.auto_inact):
             d.pop(cid, None)
         ch.setText(4, "offline (aguardando)")
@@ -956,7 +1027,19 @@ class MainWindow(QMainWindow):
             it = self.order_tree.topLevelItem(i)
             iid = id(it)
             proc = self.recorder.proc.get(iid)
-            if not proc or proc.poll() is not None:
+            if not proc:
+                continue
+            if proc.poll() is not None:
+                if iid in self.manual_finishing:
+                    continue
+                returncode, stderr = self.recorder.get_manual_exit_info(iid)
+                if self._safe_size(self.recorder.ts.get(iid)) > 0:
+                    self._manual_log(
+                        f"Streamlink encerrou para {it.text(0)}; iniciando finalização automática."
+                    )
+                    self._stop_manual(it)
+                else:
+                    self._finalize_manual_failure(it, iid, returncode, stderr)
                 continue
             if not self.recorder.ts[iid].exists():
                 continue
@@ -978,7 +1061,24 @@ class MainWindow(QMainWindow):
         for ch in self._iter_mon():
             cid = id(ch)
             proc = self.recorder.aproc.get(cid)
-            if not proc or proc.poll() is not None:
+            if not proc:
+                continue
+            if proc.poll() is not None:
+                if cid in self.auto_finishing:
+                    continue
+                returncode, stderr = self.recorder.get_auto_exit_info(cid)
+                if self._safe_size(self.recorder.ats.get(cid)) > 0:
+                    self._mon_log(
+                        f"Streamlink encerrou para {ch.text(2)}; iniciando finalização automática."
+                    )
+                    ch.setText(4, "Convertendo…")
+                    self.conv_progress.setRange(0, 0)
+                    self.auto_finishing.add(cid)
+                    self.recorder.stop_auto(
+                        cid, lambda fut, c=cid, it=ch: self._finish_auto(fut, it, c)
+                    )
+                else:
+                    self._finalize_auto_failure(ch, cid, returncode, stderr)
                 continue
             if not self.recorder.ats[cid].exists():
                 continue

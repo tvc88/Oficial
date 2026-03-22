@@ -1,12 +1,12 @@
 """Funções auxiliares para interação com Telegram."""
 
 import os
-import json
 import logging
 from pathlib import Path
 from typing import Optional
 
 import requests
+from config import read_json_file
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ def _load_creds() -> tuple[Optional[str], Optional[str]]:
         return token, chat_id
     if CONFIG_FILE.exists():
         try:
-            data = json.loads(CONFIG_FILE.read_text())
+            data = read_json_file(CONFIG_FILE)
             token = token or data.get("telegram_token")
             chat_id = chat_id or data.get("telegram_chat_id")
         except Exception as exc:
